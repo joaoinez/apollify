@@ -1,0 +1,18 @@
+{
+  "name": "apollify",
+  "version": "1.0.0",
+  "description": "Apollify creates spotify playlists based on the selected artists",
+  "author": "Joao Inez",
+  "private": true,
+  "scripts": {
+    "dev": "nuxt",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "generate": "nuxt generate"
+  },
+  "dependencies": {
+    "nuxt": "^2.0.0",
+    "@nuxtjs/pwa": "^3.0.0-0"
+  },
+  "devDependencies": {}
+}
