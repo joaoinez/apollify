@@ -24,6 +24,7 @@ export default {
    ** Global CSS
    */
   css: [],
+  serverMiddleware: ["redirect-ssl"],
   /*
    ** Plugins to load before mounting the App
    */
