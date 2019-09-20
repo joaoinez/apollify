@@ -32,13 +32,6 @@ body {
     #4a148c 100%
   );
   background-color: #e1bee7;
-  /* background: radial-gradient(
-    ellipse at center,
-    #ffecb3 0%,
-    #ffe082 0%,
-    #ff8f00 100%
-  );
-  background-color: #ffecb3; */
 }
 
 a {

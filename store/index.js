@@ -1,6 +1,9 @@
 export const state = () => ({
   clientID: "1a3b2753431c403dbb7474b0fd801759",
-  redirectURI: "http://localhost:3000/profile",
+  redirectURI:
+    process.env.NODE_ENV === "development"
+      ? "http://localhost:3000/profile"
+      : "https://apollify.herokuapp.com/profile",
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
   state: "",
