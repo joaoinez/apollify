@@ -24,6 +24,23 @@ html {
   margin: 0;
 }
 
+body {
+  background: radial-gradient(
+    ellipse at center,
+    #e1bee7 0%,
+    #ce93d8 0%,
+    #4a148c 100%
+  );
+  background-color: #e1bee7;
+  /* background: radial-gradient(
+    ellipse at center,
+    #ffecb3 0%,
+    #ffe082 0%,
+    #ff8f00 100%
+  );
+  background-color: #ffecb3; */
+}
+
 a {
   text-decoration: none;
   color: white;
@@ -31,13 +48,6 @@ a {
 
 .main {
   min-height: 100vh;
-  background: radial-gradient(
-    ellipse at center,
-    #f6cb6c 0%,
-    #f3c65d 0%,
-    #f2ae54 100%
-  );
-  background-color: #f6cb6c;
 }
 
 .container {
@@ -49,10 +59,10 @@ a {
   color: white;
   max-width: 1000px;
   margin: 0 auto;
-  padding: 100px 0;
+  padding: 100px 40px;
 
   &.no-padding {
-    padding: 0;
+    padding: 0 40px;
   }
 }
 

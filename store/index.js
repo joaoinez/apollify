@@ -3,7 +3,7 @@ export const state = () => ({
   redirectURI: "http://localhost:3000/profile",
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
-  next: "",
+  state: "",
   artists: [],
   selectedArtists: []
 });
@@ -15,8 +15,11 @@ export const mutations = {
   seNext(state, next) {
     state.next = next;
   },
-  setArtists(state, artists) {
+  addArtists(state, artists) {
     state.artists = [...state.artists, ...artists];
+  },
+  cleanArtists(state) {
+    state.artists = [];
   },
   addArtist(state, artist) {
     state.selectedArtists = [...state.selectedArtists, artist];
@@ -25,5 +28,8 @@ export const mutations = {
     state.selectedArtists = state.selectedArtists.filter(
       _artist => _artist !== artist
     );
+  },
+  cleanSelectedArtists(state) {
+    state.selectedArtists = [];
   }
 };

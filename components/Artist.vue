@@ -1,10 +1,11 @@
 <template>
   <li>
     <div class="img-wrapper">
-      <img :src="artist.images[0].url" width="200" height="200" alt />
-      <div :class="{'dark-filter': true, 'selected': isSelected()}">
-        <button class="round-btn" v-if="!isSelected()" @click="selectArtist">+</button>
-        <button class="round-btn" v-if="isSelected()" @click="removeSelectedArtist">-</button>
+      <img :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
+      <p v-if="!artistImage()">?</p>
+      <div :class="{'dark-filter': true, 'selected': isSelected()}" @click="toggleArtist">
+        <button class="round-btn" v-if="!isSelected()">+</button>
+        <button class="round-btn" v-if="isSelected()">-</button>
       </div>
     </div>
     <p>{{artist.name}}</p>
@@ -13,6 +14,7 @@
 
 <script>
 import { mapState, mapMutations } from "vuex";
+import * as R from "ramda";
 
 export default {
   props: {
@@ -24,11 +26,19 @@ export default {
     isSelected() {
       return this.selectedArtists.includes(this.artist.id);
     },
-    selectArtist() {
-      this.addArtist(this.artist.id);
+    toggleArtist() {
+      if (!this.isSelected()) {
+        this.addArtist(this.artist.id);
+      } else {
+        this.removeArtist(this.artist.id);
+      }
     },
-    removeSelectedArtist() {
-      this.removeArtist(this.artist.id);
+    artistImage() {
+      return R.compose(
+        R.prop("url"),
+        R.head,
+        R.prop("images")
+      )(this.artist);
     }
   }
 };
@@ -38,6 +48,7 @@ export default {
 li {
   text-align: center;
   margin: 20px;
+  max-width: 200px;
 
   &:hover {
     .dark-filter {
@@ -57,10 +68,14 @@ li {
   height: 200px;
   width: 200px;
   margin-bottom: 10px;
+  background-color: black;
 
   img {
     transition-duration: 33ms;
     transition-property: opacity;
+    max-width: 200px;
+    max-width: 200px;
+    object-fit: cover;
   }
 
   .dark-filter {
@@ -76,6 +91,7 @@ li {
     transition-duration: 33ms;
     transition-property: opacity;
     opacity: 0;
+    cursor: pointer;
 
     &.selected {
       opacity: 1;
@@ -103,9 +119,18 @@ li {
     }
 
     &:focus {
-      transform: scale(0.9);
       outline: none;
     }
+  }
+
+  p {
+    position: absolute;
+    top: calc(50% - 60px);
+    left: calc(50% - 25px);
+    color: #eeeeee;
+    font-size: 6em;
+    width: 50px;
+    height: 120px;
   }
 }
 </style>
