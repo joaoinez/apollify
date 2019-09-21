@@ -7,7 +7,7 @@
       <div class="link" v-if="!loading && !sessionExpired">
         <a :href="playlistURL" target="_blank" rel="noopener noreferrer nofollow">▶</a>
 
-        <img :src="playlistImg" alt="Apollify Playlist" v-if="playlistImg" />
+        <img :src="playlistImg" :srcset="playlistImgs" alt="Apollify Playlist" v-if="playlistImg" />
         <div class="missing-img" v-else></div>
       </div>
     </transition>
@@ -40,7 +40,8 @@ export default {
       tracks: [],
       playlistID: "",
       playlistURL: "",
-      playlistImg: ""
+      playlistImg: "",
+      playlistImgs: []
     };
   },
   computed: mapState(["accessToken", "selectedArtists"]),
@@ -163,7 +164,13 @@ export default {
                           this.loading = false;
                           this.playlistImg = R.compose(
                             R.prop("url"),
-                            R.head
+                            R.nth(1)
+                          )(data);
+                          this.playlistImgs = R.compose(
+                            R.join(", "),
+                            R.zipWith(R.concat, R.__, [" 1x", " 1.5x", " 2x"]),
+                            R.reverse,
+                            R.map(R.prop("url"))
                           )(data);
                         } else {
                           this.loading = false;

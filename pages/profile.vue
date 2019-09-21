@@ -98,7 +98,6 @@ export default {
           .then(data => {
             const error = R.prop("error")(data);
             if (!error) {
-              console.log(data);
               this.next = R.path(["artists", "next"])(data);
               !this.next && this.endOfPageObserver.disconnect();
               const items = R.path(["artists", "items"])(data);
