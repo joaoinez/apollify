@@ -5,7 +5,7 @@
       <Artist v-for="artist in artists" :key="artist.id" :artist="artist"></Artist>
     </transition-group>
     <Loader v-if="loading && !sessionExpired" />
-    <div id="end-of-page"></div>
+    <div v-if="!sessionExpired" id="end-of-page"></div>
     <div class="playlist-wrapper">
       <small v-if="selectedArtists.length">{{ selectedArtists.length }} selected</small>
       <nuxt-link
@@ -39,7 +39,8 @@ export default {
       loading: true,
       sessionExpired: false,
       next: "",
-      endOfPageObserver: null
+      endOfPageObserver: null,
+      hash: ""
     };
   },
   computed: mapState(["accessToken", "artists", "selectedArtists"]),
@@ -49,7 +50,11 @@ export default {
       const endOfPageEl = document.querySelector("#end-of-page");
 
       this.endOfPageObserver = new window.IntersectionObserver(([entry]) => {
-        entry.isIntersecting && this.next && this.fetchArtists(true);
+        entry.isIntersecting &&
+          !this.sessionExpired &&
+          this.next &&
+          !this.loading &&
+          this.fetchArtists(true);
       });
 
       endOfPageEl && this.endOfPageObserver.observe(endOfPageEl);
@@ -65,7 +70,7 @@ export default {
       const url = !next
         ? "https://api.spotify.com/v1/me/following?type=artist"
         : this.next;
-      const hash = this.$route.hash.split("&");
+      const hash = this.hash || this.$route.hash.split("&");
       if (!!R.head(hash)) {
         const accessToken = R.compose(
           R.replace(/#access_token=/g, ""),
@@ -89,6 +94,7 @@ export default {
               const items = R.path(["artists", "items"])(data);
               this.artists.length && !next && this.cleanArtists();
               this.addArtists(items);
+              !this.next && console.log(this.artists.length);
               this.loading = false;
             } else {
               this.loading = false;

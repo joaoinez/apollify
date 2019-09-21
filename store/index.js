@@ -1,3 +1,5 @@
+import * as R from "ramda";
+
 export const state = () => ({
   clientID: "1a3b2753431c403dbb7474b0fd801759",
   redirectURI:
@@ -15,7 +17,7 @@ export const mutations = {
     state.accessToken = token;
   },
   addArtists(state, artists) {
-    state.artists = [...state.artists, ...artists];
+    state.artists = R.uniq([...state.artists, ...artists]);
   },
   cleanArtists(state) {
     state.artists = [];

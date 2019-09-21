@@ -68,12 +68,13 @@ li {
   height: 200px;
   width: 200px;
   margin-bottom: 10px;
-  background-color: black;
   box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
 
   img {
     transition-duration: 33ms;
     transition-property: opacity;
+    height: 100%;
+    width: 100%;
     max-width: 200px;
     max-width: 200px;
     object-fit: cover;

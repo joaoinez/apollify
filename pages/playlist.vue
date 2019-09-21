@@ -7,7 +7,8 @@
       <div class="link" v-if="!loading && !sessionExpired">
         <a :href="playlistURL" target="_blank" rel="noopener noreferrer nofollow">▶</a>
 
-        <img :src="playlistImg" alt="Apollify Playlist" />
+        <img :src="playlistImg" alt="Apollify Playlist" v-if="playlistImg" />
+        <div class="missing-img" v-else></div>
       </div>
     </transition>
     <a
@@ -213,6 +214,12 @@ export default {
   }
 
   img {
+    width: 320px;
+    height: 320px;
+    box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
+  }
+
+  .missing-img {
     width: 320px;
     height: 320px;
     box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
