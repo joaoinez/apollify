@@ -4,6 +4,15 @@
     <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
       <Artist v-for="artist in artists" :key="artist.id" :artist="artist"></Artist>
     </transition-group>
+    <p v-if="!sessionExpired && !loading && !artists.length">
+      You have no artists. Go follow some on
+      <a
+        href="https://open.spotify.com"
+        target="_blank"
+        rel="noopener noreferrer nofollow"
+        class="link"
+      >Spotify</a> and come back later.
+    </p>
     <Loader v-if="loading && !sessionExpired" />
     <div v-if="!sessionExpired" id="end-of-page"></div>
     <div class="playlist-wrapper">
@@ -89,12 +98,12 @@ export default {
           .then(data => {
             const error = R.prop("error")(data);
             if (!error) {
+              console.log(data);
               this.next = R.path(["artists", "next"])(data);
               !this.next && this.endOfPageObserver.disconnect();
               const items = R.path(["artists", "items"])(data);
               this.artists.length && !next && this.cleanArtists();
               this.addArtists(items);
-              !this.next && console.log(this.artists.length);
               this.loading = false;
             } else {
               this.loading = false;
@@ -114,6 +123,7 @@ export default {
 .container {
   position: relative;
 }
+
 ul {
   display: flex;
   justify-content: center;
@@ -160,8 +170,20 @@ a[disabled] {
 .artists-list-leave-active {
   transition: all 0.5s;
 }
+
 .artists-list-enter, .artists-list-leave-to /* .list-leave-active below version 2.1.8 */ {
   opacity: 0;
   transform: translateY(30px);
+}
+
+.link {
+  color: white;
+  font-weight: 700;
+  text-decoration-line: underline;
+  transition: color 33ms ease-in-out;
+
+  &:hover {
+    color: #1ed760;
+  }
 }
 </style>
