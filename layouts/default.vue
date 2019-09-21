@@ -1,5 +1,6 @@
 <template>
   <div class="main">
+    <div class="background"></div>
     <nuxt />
   </div>
 </template>
@@ -24,16 +25,6 @@ html {
   margin: 0;
 }
 
-body {
-  background: radial-gradient(
-    ellipse at center,
-    #e1bee7 0%,
-    #ce93d8 0%,
-    #4a148c 100%
-  );
-  background-color: #e1bee7;
-}
-
 a {
   text-decoration: none;
   color: white;
@@ -41,6 +32,22 @@ a {
 
 .main {
   min-height: 100vh;
+  position: relative;
+
+  .background {
+    position: fixed;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    background: radial-gradient(
+      ellipse at center,
+      #e1bee7 0%,
+      #ce93d8 0%,
+      #4a148c 100%
+    );
+    background-color: #e1bee7;
+  }
 }
 
 .container {
@@ -49,10 +56,15 @@ a {
   justify-content: center;
   align-items: center;
   height: 100%;
+  min-height: 100vh;
   color: white;
   max-width: 1000px;
   margin: 0 auto;
   padding: 100px 40px;
+
+  h2 {
+    text-align: center;
+  }
 
   &.no-padding {
     padding: 0 40px;
@@ -85,6 +97,7 @@ a {
   transition-property: background-color, border-color, color, box-shadow, filter,
     transform;
   display: inline-block;
+  box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
 
   &:hover {
     transform: scale(1.04);

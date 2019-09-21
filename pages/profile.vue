@@ -1,9 +1,9 @@
 <template>
   <section class="container">
     <h2 class="subtitle" v-if="!sessionExpired">Pick your artists</h2>
-    <ul v-if="!sessionExpired">
+    <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
       <Artist v-for="artist in artists" :key="artist.id" :artist="artist"></Artist>
-    </ul>
+    </transition-group>
     <Loader v-if="loading && !sessionExpired" />
     <div id="end-of-page"></div>
     <div class="playlist-wrapper">
@@ -28,6 +28,7 @@ import SessionExpired from "~/components/SessionExpired";
 import Loader from "~/components/Loader";
 
 export default {
+  scrollToTop: true,
   components: {
     Artist,
     SessionExpired,
@@ -143,5 +144,18 @@ a:disabled,
 a[disabled] {
   background-color: grey;
   pointer-events: none;
+}
+
+.artists-list-move {
+  transition: transform 0.5s;
+}
+
+.artists-list-enter-active,
+.artists-list-leave-active {
+  transition: all 0.5s;
+}
+.artists-list-enter, .artists-list-leave-to /* .list-leave-active below version 2.1.8 */ {
+  opacity: 0;
+  transform: translateY(30px);
 }
 </style>

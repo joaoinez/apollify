@@ -6,7 +6,6 @@ export const state = () => ({
       : "https://apollify.herokuapp.com/profile",
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
-  state: "",
   artists: [],
   selectedArtists: []
 });
@@ -14,9 +13,6 @@ export const state = () => ({
 export const mutations = {
   setAccessToken(state, token) {
     state.accessToken = token;
-  },
-  seNext(state, next) {
-    state.next = next;
   },
   addArtists(state, artists) {
     state.artists = [...state.artists, ...artists];
