@@ -1,7 +1,14 @@
 <template>
   <li>
     <div class="img-wrapper">
-      <img :src="artistImage" :alt="artist.name" v-if="artistImage && visible" />
+      <img
+        :src="artistImage"
+        :alt="artist.name"
+        v-if="artistImage && visible"
+        loading="lazy"
+        width="200"
+        height="200"
+      />
       <p v-if="!artistImage">?</p>
       <button
         :class="{'dark-filter': true, 'selected': isSelected()}"
