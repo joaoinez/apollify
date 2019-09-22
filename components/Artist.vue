@@ -28,7 +28,27 @@ export default {
   props: {
     artist: Object
   },
+  data() {
+    return {
+      observer: null,
+      visible: false
+    };
+  },
   computed: mapState(["selectedArtists"]),
+  mounted() {
+    if (process.client) {
+      const imgEl = this.$el.querySelector("img");
+
+      this.observer = new window.IntersectionObserver(([entry]) => {
+        this.visible = entry.isIntersecting;
+      });
+
+      imgEl && this.observer.observe(imgEl);
+    }
+  },
+  beforeDestroy() {
+    this.observer && this.observer.disconnect();
+  },
   methods: {
     ...mapMutations(["addArtist", "removeArtist"]),
     isSelected() {
@@ -42,11 +62,17 @@ export default {
       }
     },
     artistImage() {
-      return R.compose(
-        R.prop("url"),
-        R.nth(1),
-        R.prop("images")
-      )(this.artist);
+      return this.visible
+        ? R.compose(
+            R.prop("url"),
+            R.nth(1),
+            R.prop("images")
+          )(this.artist)
+        : R.compose(
+            R.prop("url"),
+            R.last,
+            R.prop("images")
+          )(this.artist);
     }
   }
 };
