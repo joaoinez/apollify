@@ -20,7 +20,13 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: "#fff" },
+  loading: { color: "#1db954" },
+  manifest: {
+    name: "Apollify",
+    short_name: "Apollify",
+    description: process.env.npm_package_description || "",
+    theme_color: "#4a148c"
+  },
   /*
    ** Global CSS
    */
@@ -38,14 +44,7 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
-    [
-      "@nuxtjs/pwa",
-      {
-        manifest: {
-          name: "Apollify"
-        }
-      }
-    ],
+    "@nuxtjs/pwa",
     [
       "nuxt-fontawesome",
       {
