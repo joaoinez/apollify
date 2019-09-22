@@ -166,7 +166,7 @@ export default {
                           this.loading = false;
                           this.playlistImg = R.compose(
                             R.prop("url"),
-                            R.nth(1)
+                            R.head
                           )(data);
                           this.playlistImgs = R.compose(
                             R.join(", "),
