@@ -11,7 +11,7 @@
         <div class="round-btn" v-if="!isSelected()">
           <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
-        <div class="round-btn" v-if="isSelected()" aria-label="Remove artist">
+        <div class="round-btn" v-if="isSelected()">
           <font-awesome-icon :icon="['fas', 'minus']" class="icon" />
         </div>
       </button>
