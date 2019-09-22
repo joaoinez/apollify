@@ -5,7 +5,9 @@
     <h2 class="subtitle" v-else-if="!sessionExpired">Here's your playlist!</h2>
     <transition name="reveal">
       <div class="link" v-if="!loading && !sessionExpired">
-        <a :href="playlistURL" target="_blank" rel="noopener noreferrer nofollow">▶</a>
+        <a :href="playlistURL">
+          <font-awesome-icon :icon="['fas', 'play']" class="icon" />
+        </a>
 
         <img :src="playlistImg" :srcset="playlistImgs" alt="Apollify Playlist" v-if="playlistImg" />
         <div class="missing-img" v-else></div>
@@ -213,10 +215,17 @@ export default {
     text-align: center;
     transition-duration: 33ms;
     transition-property: transform, background;
+    padding: 0;
 
     &:hover {
       transform: scale(1.04);
       background-color: rgba(0, 0, 0, 0.8);
+    }
+
+    .icon {
+      width: 30px;
+      height: auto;
+      margin-left: 5px;
     }
   }
 

@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Apollify creates spotify playlists based on the artists you want",
   "author": "Joao Inez",
-  "private": true,
   "scripts": {
     "dev": "nuxt",
     "build": "nuxt build",
@@ -11,8 +10,12 @@
     "heroku-postbuild": "npm run build"
   },
   "dependencies": {
+    "@fortawesome/fontawesome-svg-core": "^1.2.24",
+    "@fortawesome/free-solid-svg-icons": "^5.11.1",
+    "@fortawesome/vue-fontawesome": "^0.1.7",
     "@nuxtjs/pwa": "^3.0.0-0",
     "nuxt": "^2.0.0",
+    "nuxt-fontawesome": "^0.4.0",
     "ramda": "^0.26.1",
     "redirect-ssl": "^1.4.1"
   },

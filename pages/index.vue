@@ -1,7 +1,7 @@
 <template>
   <section class="container no-padding">
     <h1 class="title">Apollify</h1>
-    <h2 class="subtitle">Create spotify playlists based on the artists you want</h2>
+    <h2 class="subtitle">Create spotify playlists with the artists you want</h2>
     <a
       :href="`https://accounts.spotify.com/authorize?client_id=${clientID}&redirect_uri=${redirectURI}&scope=${scope}&response_type=token`"
       class="btn-green"

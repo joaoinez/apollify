@@ -4,8 +4,12 @@
       <img :srcset="artistImages()" :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
       <p v-if="!artistImage()">?</p>
       <div :class="{'dark-filter': true, 'selected': isSelected()}" @click="toggleArtist">
-        <button class="round-btn" v-if="!isSelected()">+</button>
-        <button class="round-btn" v-if="isSelected()">-</button>
+        <button class="round-btn" v-if="!isSelected()">
+          <font-awesome-icon :icon="['fas', 'plus']" class="icon" />
+        </button>
+        <button class="round-btn" v-if="isSelected()">
+          <font-awesome-icon :icon="['fas', 'minus']" class="icon" />
+        </button>
       </div>
     </div>
     <p>{{artist.name}}</p>
@@ -117,11 +121,13 @@ li {
     width: 50px;
     background-color: rgba(0, 0, 0, 0.6);
     padding: 0;
-    padding-bottom: 6px;
     margin: 0;
     color: white;
     transition-duration: 33ms;
     transition-property: background, transform;
+    display: flex;
+    justify-content: center;
+    align-items: center;
     cursor: pointer;
 
     &:hover {
@@ -131,6 +137,11 @@ li {
 
     &:focus {
       outline: none;
+    }
+
+    .icon {
+      width: 20px;
+      height: auto;
     }
   }
 

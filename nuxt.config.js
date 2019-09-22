@@ -37,7 +37,25 @@ export default {
   /*
    ** Nuxt.js modules
    */
-  modules: ["@nuxtjs/pwa"],
+  modules: [
+    "@nuxtjs/pwa",
+    [
+      "nuxt-fontawesome",
+      {
+        imports: [
+          {
+            set: "@fortawesome/free-solid-svg-icons",
+            icons: ["fas"]
+          }
+        ]
+      }
+    ]
+  ],
+  pwa: {
+    manifest: {
+      name: "Apollify"
+    }
+  },
   /*
    ** Build configuration
    */
