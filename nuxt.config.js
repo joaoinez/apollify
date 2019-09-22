@@ -18,7 +18,11 @@ export default {
         name: "description",
         content: process.env.npm_package_description || ""
       },
-      { name: "keywords", content: "spotify, artists, playlist, apollify" }
+      {
+        hid: "keywords",
+        name: "keywords",
+        content: "spotify, artists, playlist, apollify"
+      }
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     script: [
@@ -27,7 +31,14 @@ export default {
         async: true
       }
     ],
-    script: [{ src: "/adsense.js" }]
+    script: [
+      {
+        innerHTML:
+          '(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: "ca-pub-8397652206482296", enable_page_level_ads: true });',
+        type: "text/javascript",
+        charset: "utf-8"
+      }
+    ]
   },
   /*
    ** Customize the progress-bar color
