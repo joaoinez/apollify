@@ -38,7 +38,14 @@ export default {
    ** Nuxt.js modules
    */
   modules: [
-    "@nuxtjs/pwa",
+    [
+      "@nuxtjs/pwa",
+      {
+        manifest: {
+          name: "Apollify"
+        }
+      }
+    ],
     [
       "nuxt-fontawesome",
       {
@@ -51,11 +58,6 @@ export default {
       }
     ]
   ],
-  pwa: {
-    manifest: {
-      name: "Apollify"
-    }
-  },
   /*
    ** Build configuration
    */
