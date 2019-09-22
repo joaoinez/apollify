@@ -33,8 +33,12 @@ export default {
     ],
     script: [
       {
-        innerHTML:
-          '(adsbygoogle = window.adsbygoogle || []).push({google_ad_client: "ca-pub-8397652206482296", enable_page_level_ads: true });',
+        innerHTML: `
+        (adsbygoogle = window.adsbygoogle || []).push({
+          google_ad_client: "ca-pub-8397652206482296",
+          enable_page_level_ads: true
+        });
+        `,
         type: "text/javascript",
         charset: "utf-8"
       }
