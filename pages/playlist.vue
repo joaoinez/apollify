@@ -9,7 +9,7 @@
           <font-awesome-icon :icon="['fas', 'play']" class="icon" />
         </a>
 
-        <img :src="playlistImg" :srcset="playlistImgs" alt="Apollify Playlist" v-if="playlistImg" />
+        <img :src="playlistImg" alt="Apollify Playlist" v-if="playlistImg" />
         <div class="missing-img" v-else></div>
       </div>
     </transition>
@@ -42,8 +42,7 @@ export default {
       tracks: [],
       playlistID: "",
       playlistURL: "",
-      playlistImg: "",
-      playlistImgs: []
+      playlistImg: ""
     };
   },
   computed: mapState(["accessToken", "selectedArtists"]),
@@ -167,12 +166,6 @@ export default {
                           this.playlistImg = R.compose(
                             R.prop("url"),
                             R.head
-                          )(data);
-                          this.playlistImgs = R.compose(
-                            R.join(", "),
-                            R.zipWith(R.concat, R.__, [" 1x", " 1.5x", " 2x"]),
-                            R.reverse,
-                            R.map(R.prop("url"))
                           )(data);
                         } else {
                           this.loading = false;

@@ -2,7 +2,10 @@ import * as R from "ramda";
 
 export const state = () => ({
   clientID: "1a3b2753431c403dbb7474b0fd801759",
-  redirectURI: process.env.REDIRECT_URI,
+  redirectURI:
+    process.env.NODE_ENV === "production"
+      ? process.env.REDIRECT_URI
+      : "http://localhost:3000/profile",
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
   artists: [],
