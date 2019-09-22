@@ -1,7 +1,7 @@
 <template>
   <li>
     <div class="img-wrapper">
-      <img :srcset="artistImages()" :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
+      <img :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
       <p v-if="!artistImage()">?</p>
       <button
         :class="{'dark-filter': true, 'selected': isSelected()}"
@@ -45,15 +45,6 @@ export default {
       return R.compose(
         R.prop("url"),
         R.nth(1),
-        R.prop("images")
-      )(this.artist);
-    },
-    artistImages() {
-      return R.compose(
-        R.join(", "),
-        R.zipWith(R.concat, R.__, [" 1x", " 1.5x", " 2x"]),
-        R.reverse,
-        R.map(R.prop("url")),
         R.prop("images")
       )(this.artist);
     }

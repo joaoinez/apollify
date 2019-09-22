@@ -1,4 +1,9 @@
+// require('dotenv').config()
 export default {
+  env: {
+    nodeEnv: process.env.NODE_ENV || "development",
+    redirectURI: process.env.REDIRECT_URI || "http://localhost:3000/profile"
+  },
   mode: "universal",
   /*
    ** Headers of the page
@@ -15,7 +20,14 @@ export default {
       },
       { name: "keywords", content: "spotify, artists, playlist, apollify" }
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
+    script: [
+      {
+        src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
+        async: true
+      }
+    ],
+    script: [{ src: "/adsense.js" }]
   },
   /*
    ** Customize the progress-bar color
@@ -65,6 +77,10 @@ export default {
     /*
      ** You can extend webpack config here
      */
-    extend(config, ctx) {}
+    extend(config, ctx) {
+      config.node = {
+        fs: "empty"
+      };
+    }
   }
 };
