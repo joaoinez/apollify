@@ -3,14 +3,18 @@
     <div class="img-wrapper">
       <img :srcset="artistImages()" :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
       <p v-if="!artistImage()">?</p>
-      <div :class="{'dark-filter': true, 'selected': isSelected()}" @click="toggleArtist">
-        <button class="round-btn" v-if="!isSelected()">
-          <font-awesome-icon :icon="['fas', 'plus']" class="icon" />
-        </button>
-        <button class="round-btn" v-if="isSelected()">
+      <button
+        :class="{'dark-filter': true, 'selected': isSelected()}"
+        @click="toggleArtist"
+        aria-label="Toggle artist selected"
+      >
+        <div class="round-btn" v-if="!isSelected()">
+          <font-awesome-icon :icon="['fas', 'plus']" />
+        </div>
+        <div class="round-btn" v-if="isSelected()" aria-label="Remove artist">
           <font-awesome-icon :icon="['fas', 'minus']" class="icon" />
-        </button>
-      </div>
+        </div>
+      </button>
     </div>
     <p>{{artist.name}}</p>
   </li>
@@ -106,6 +110,8 @@ li {
     transition-duration: 33ms;
     transition-property: opacity;
     opacity: 0;
+    border: none;
+    border-radius: 50%;
     cursor: pointer;
 
     &.selected {

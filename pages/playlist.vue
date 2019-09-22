@@ -223,9 +223,9 @@ export default {
     }
 
     .icon {
-      width: 30px;
+      width: 35px;
       height: auto;
-      margin-left: 5px;
+      padding-left: 5px;
     }
   }
 
