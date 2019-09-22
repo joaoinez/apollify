@@ -1,4 +1,4 @@
-// require('dotenv').config()
+require("dotenv").config();
 export default {
   env: {
     nodeEnv: process.env.NODE_ENV || "development",
@@ -79,6 +79,12 @@ export default {
             icons: ["fas"]
           }
         ]
+      }
+    ],
+    [
+      "@nuxtjs/google-analytics",
+      {
+        id: process.env.ANALYTICS_ID
       }
     ]
   ],
