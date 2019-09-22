@@ -44,7 +44,7 @@ export default {
   /*
    ** Customize the progress-bar color
    */
-  loading: { color: "#1db954" },
+  loading: { color: "#1db954", throttle: 0, height: "4px" },
   manifest: {
     name: "Apollify",
     short_name: "Apollify",
