@@ -25,7 +25,8 @@ export default {
     name: "Apollify",
     short_name: "Apollify",
     description: process.env.npm_package_description || "",
-    theme_color: "#4a148c"
+    theme_color: "#4a148c",
+    lang: "en"
   },
   /*
    ** Global CSS
