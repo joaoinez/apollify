@@ -24,6 +24,7 @@ export default {
         content: "spotify, artists, playlist, apollify"
       }
     ],
+    __dangerouslyDisableSanitizers: ["script"],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
     script: [
       {
