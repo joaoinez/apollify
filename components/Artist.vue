@@ -1,8 +1,8 @@
 <template>
   <li>
     <div class="img-wrapper">
-      <img :src="artistImage()" :alt="artist.name" v-if="artistImage()" />
-      <p v-if="!artistImage()">?</p>
+      <img :src="artistImage" :alt="artist.name" v-if="artistImage && visible" />
+      <p v-if="!artistImage">?</p>
       <button
         :class="{'dark-filter': true, 'selected': isSelected()}"
         @click="toggleArtist"
@@ -31,13 +31,18 @@ export default {
   data() {
     return {
       observer: null,
-      visible: false
+      visible: false,
+      artistImage: R.compose(
+        R.prop("url"),
+        R.nth(1),
+        R.prop("images")
+      )(this.artist)
     };
   },
   computed: mapState(["selectedArtists"]),
   mounted() {
     if (process.client) {
-      const imgEl = this.$el.querySelector("img");
+      const imgEl = this.$el.querySelector(".img-wrapper");
 
       this.observer = new window.IntersectionObserver(([entry]) => {
         this.visible = entry.isIntersecting;
@@ -60,19 +65,6 @@ export default {
       } else {
         this.removeArtist(this.artist.id);
       }
-    },
-    artistImage() {
-      return this.visible
-        ? R.compose(
-            R.prop("url"),
-            R.nth(1),
-            R.prop("images")
-          )(this.artist)
-        : R.compose(
-            R.prop("url"),
-            R.last,
-            R.prop("images")
-          )(this.artist);
     }
   }
 };
