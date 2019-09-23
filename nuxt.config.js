@@ -24,22 +24,7 @@ export default {
         content: "spotify, artists, playlist, apollify"
       }
     ],
-    __dangerouslyDisableSanitizers: ["script"],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
-    script: [
-      {
-        src: "https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js",
-        async: true
-      },
-      {
-        innerHTML: `(adsbygoogle = window.adsbygoogle || []).push({
-  google_ad_client: "ca-pub-8397652206482296",
-  enable_page_level_ads: true
-});`,
-        type: "text/javascript",
-        charset: "utf-8"
-      }
-    ]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
   },
   /*
    ** Customize the progress-bar color
@@ -56,7 +41,7 @@ export default {
    ** Global CSS
    */
   css: [],
-  serverMiddleware: ["redirect-ssl"],
+  serverMiddleware: ["redirect-ssl", "~/api/redirect-heroku"],
   /*
    ** Plugins to load before mounting the App
    */
