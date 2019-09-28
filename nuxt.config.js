@@ -31,8 +31,7 @@ export default {
       {
         hid: "og:image",
         property: "og:image",
-        type: "text/html",
-        content: "/image.svg"
+        content: "https://www.apollify.com/static/image.svg"
       },
       {
         hid: "og:image:alt",
@@ -62,8 +61,7 @@ export default {
       {
         hid: "twitter:image",
         name: "twitter:image",
-        type: "text/html",
-        content: "/image.svg"
+        content: "https://www.apollify.com/static/image.svg"
       },
       {
         hid: "twitter:image:alt",
