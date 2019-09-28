@@ -24,6 +24,26 @@ export default {
         content: "spotify, artists, playlist, apollify"
       },
       {
+        hid: "og:type",
+        property: "og:type",
+        content: "website"
+      },
+      {
+        hid: "og:title",
+        property: "og:title",
+        content: "Apollify"
+      },
+      {
+        hid: "og:site_name",
+        property: "og:site_name",
+        content: "Apollify"
+      },
+      {
+        hid: "og:description",
+        property: "og:description",
+        content: process.env.npm_package_description || ""
+      },
+      {
         hid: "og:url",
         property: "og:url",
         content: "https://www.apollify.com/"
