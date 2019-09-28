@@ -31,6 +31,7 @@ export default {
       {
         hid: "og:image",
         property: "og:image",
+        type: "text/html",
         content: "/image.svg"
       },
       {
@@ -61,6 +62,7 @@ export default {
       {
         hid: "twitter:image",
         name: "twitter:image",
+        type: "text/html",
         content: "/image.svg"
       },
       {
