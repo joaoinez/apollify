@@ -22,6 +22,51 @@ export default {
         hid: "keywords",
         name: "keywords",
         content: "spotify, artists, playlist, apollify"
+      },
+      {
+        hid: "og:url",
+        property: "og:url",
+        content: "https://www.apollify.com/"
+      },
+      {
+        hid: "og:image",
+        property: "og:image",
+        content: "/image.svg"
+      },
+      {
+        hid: "og:image:alt",
+        property: "og:image:alt",
+        content: "Apollify"
+      },
+      {
+        hid: "twitter:card",
+        name: "twitter:card",
+        content: "summary_large_image"
+      },
+      {
+        hid: "twitter:url",
+        name: "twitter:url",
+        content: "https://www.apollify.com"
+      },
+      {
+        hid: "twitter:title",
+        name: "twitter:title",
+        content: "Apollify"
+      },
+      {
+        hid: "twitter:description",
+        name: "twitter:description",
+        content: process.env.npm_package_description || ""
+      },
+      {
+        hid: "twitter:image",
+        name: "twitter:image",
+        content: "/image.svg"
+      },
+      {
+        hid: "twitter:image:alt",
+        name: "twitter:image:alt",
+        content: "Apollify"
       }
     ],
     link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
