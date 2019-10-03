@@ -2,14 +2,14 @@
   <li>
     <div class="img-wrapper">
       <img
-        :src="artistImage"
+        :src="visible ? highResImg : lowResImg"
         :alt="artist.name"
-        v-if="artistImage && visible"
+        v-if="highResImg || lowResImg"
         loading="lazy"
         width="200"
         height="200"
       />
-      <p v-if="!artistImage">?</p>
+      <p v-if="!highResImg">?</p>
       <button
         :class="{'dark-filter': true, 'selected': isSelected()}"
         @click="toggleArtist"
@@ -39,9 +39,14 @@ export default {
     return {
       observer: null,
       visible: false,
-      artistImage: R.compose(
+      highResImg: R.compose(
         R.prop("url"),
         R.nth(1),
+        R.prop("images")
+      )(this.artist),
+      lowResImg: R.compose(
+        R.prop("url"),
+        R.last,
         R.prop("images")
       )(this.artist)
     };
