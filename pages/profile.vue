@@ -47,23 +47,30 @@ export default {
     return {
       loading: true,
       sessionExpired: false,
-      next: "",
+      next: null,
       endOfPageObserver: null,
-      hash: ""
+      hash: null,
+      intersecting: false
     };
   },
   computed: mapState(["accessToken", "artists", "selectedArtists"]),
+  watch: {
+    intersecting: function(intersecting) {
+      if (intersecting && !this.sessionExpired && !this.loading) {
+        this.fetchArtists();
+      }
+    }
+  },
+  created() {
+    this.artists.length && !this.next && this.cleanArtists();
+  },
   mounted() {
-    this.fetchArtists(false);
+    this.fetchArtists();
     if (process.client) {
       const endOfPageEl = document.querySelector("#end-of-page");
 
       this.endOfPageObserver = new window.IntersectionObserver(([entry]) => {
-        entry.isIntersecting &&
-          !this.sessionExpired &&
-          this.next &&
-          !this.loading &&
-          this.fetchArtists(true);
+        this.intersecting = entry.isIntersecting;
       });
 
       endOfPageEl && this.endOfPageObserver.observe(endOfPageEl);
@@ -74,11 +81,10 @@ export default {
   },
   methods: {
     ...mapMutations(["setAccessToken", "addArtists", "cleanArtists"]),
-    fetchArtists(next) {
+    fetchArtists() {
       this.loading = true;
-      const url = !next
-        ? "https://api.spotify.com/v1/me/following?type=artist"
-        : this.next;
+      const url =
+        this.next || "https://api.spotify.com/v1/me/following?type=artist";
       const hash = this.hash || this.$route.hash.split("&");
       if (!!R.head(hash)) {
         const accessToken = R.compose(
@@ -99,19 +105,39 @@ export default {
             const error = R.prop("error")(data);
             if (!error) {
               this.next = R.path(["artists", "next"])(data);
-              !this.next && this.endOfPageObserver.disconnect();
               const items = R.path(["artists", "items"])(data);
-              this.artists.length && !next && this.cleanArtists();
+
+              if (!this.next) {
+                this.endOfPageObserver.disconnect();
+                this.endOfPageObserver = null;
+              }
+
               this.addArtists(items);
               this.loading = false;
+
+              this.$nextTick(() => {
+                setTimeout(() => {
+                  if (
+                    this.endOfPageObserver &&
+                    this.intersecting &&
+                    !this.loading
+                  ) {
+                    this.fetchArtists();
+                  }
+                }, 500);
+              });
             } else {
-              this.loading = false;
               this.sessionExpired = true;
+              this.loading = false;
             }
+          })
+          .catch(() => {
+            this.sessionExpired = true;
+            this.loading = false;
           });
       } else {
-        this.loading = false;
         this.sessionExpired = true;
+        this.loading = false;
       }
     }
   }
