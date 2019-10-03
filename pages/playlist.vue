@@ -47,141 +47,117 @@ export default {
   },
   computed: mapState(["accessToken", "selectedArtists"]),
   mounted() {
-    fetch("https://api.spotify.com/v1/me", {
-      headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        Authorization: `Bearer ${this.accessToken}`
-      }
-    })
-      .then(res => res.json())
-      .then(data => {
-        const error = R.prop("error")(data);
-        if (!error) {
-          this.userID = R.prop("id")(data);
-          this.country = R.prop("country")(data);
-        } else {
-          this.loading = false;
-          this.sessionExpired = true;
-        }
-      })
-      .then(() => {
-        Promise.all(
-          this.selectedArtists.map(id =>
-            fetch(
-              `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`,
-              {
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json",
-                  Authorization: `Bearer ${this.accessToken}`
-                }
-              }
-            )
+    this.fetchData("https://api.spotify.com/v1/me").then(data => {
+      this.userID = R.prop("id")(data);
+      this.country = R.prop("country")(data);
+
+      Promise.all(
+        this.selectedArtists.map(id =>
+          this.fetchData(
+            `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`
           )
         )
-          .then(res => Promise.all(res.map(r => r.json())))
-          .then(data => {
-            const error = R.prop("error")(data);
-            if (!error) {
-              this.tracks = R.compose(
-                R.reverse,
-                R.map(R.prop("uri")),
-                R.sortBy(R.prop("popularity")),
-                R.flatten,
-                R.map(R.prop("tracks"))
-              )(data);
-            } else {
-              this.loading = false;
-              this.sessionExpired = true;
-            }
+      ).then(data => {
+        this.tracks = R.compose(
+          R.reverse,
+          R.map(R.prop("uri")),
+          R.sortBy(R.prop("popularity")),
+          R.flatten,
+          R.map(R.prop("tracks"))
+        )(data);
+
+        this.fetchData(
+          `https://api.spotify.com/v1/users/${this.userID}/playlists`,
+          "POST",
+          undefined,
+          JSON.stringify({
+            name: "Apollify Playlist",
+            public: false
           })
-          .then(() => {
-            fetch(`https://api.spotify.com/v1/users/${this.userID}/playlists`, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-                Authorization: `Bearer ${this.accessToken}`
-              },
-              body: JSON.stringify({
-                name: "Apollify Playlist",
-                public: false
-              })
-            })
-              .then(res => res.json())
-              .then(data => {
-                const error = R.prop("error")(data);
-                if (!error) {
-                  this.playlistID = R.prop("id")(data);
-                  this.playlistURL = R.path(["external_urls", "spotify"])(data);
-                } else {
-                  this.loading = false;
-                  this.sessionExpired = true;
-                }
-              })
-              .then(() => {
-                Promise.all(
-                  R.splitEvery(100)(this.tracks).map(
-                    tracks =>
-                      tracks.length &&
-                      fetch(
-                        `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks`,
-                        {
-                          method: "POST",
-                          headers: {
-                            "Content-Type": "application/json",
-                            Accept: "application/json",
-                            Authorization: `Bearer ${this.accessToken}`
-                          },
-                          body: JSON.stringify({
-                            uris: tracks
-                          })
-                        }
-                      )
-                  )
+        ).then(data => {
+          this.playlistID = R.prop("id")(data);
+          this.playlistURL = R.path(["external_urls", "spotify"])(data);
+
+          Promise.all(
+            R.splitEvery(100)(this.tracks).map(
+              tracks =>
+                tracks.length &&
+                this.fetchData(
+                  `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks`,
+                  "POST",
+                  undefined,
+                  JSON.stringify({
+                    uris: tracks
+                  }),
+                  true
                 )
-                  .then(res => {
-                    res.map(response => {
-                      const error = R.prop("status")(response) !== 201;
-                      error && (this.sessionExpired = true);
-                    });
-                  })
-                  .then(() => {
-                    fetch(
-                      `https://api.spotify.com/v1/playlists/${this.playlistID}/images`,
-                      {
-                        headers: {
-                          "Content-Type": "application/json",
-                          Accept: "application/json",
-                          Authorization: `Bearer ${this.accessToken}`
-                        }
-                      }
-                    )
-                      .then(res => res.json())
-                      .then(data => {
-                        const error = R.prop("error")(data);
-                        if (!error) {
-                          this.loading = false;
-                          this.playlistImg = R.compose(
-                            R.prop("url"),
-                            R.head
-                          )(data);
-                        } else {
-                          this.loading = false;
-                          this.sessionExpired = true;
-                        }
-                      });
-                  });
+            )
+          ).then(res => {
+            const error = res.find(response => {
+              R.prop("status")(response) !== 201;
+            });
+
+            if (error) {
+              this.sessionExpired = true;
+              this.loading = false;
+            } else {
+              this.fetchData(
+                `https://api.spotify.com/v1/playlists/${this.playlistID}/images`
+              ).then(data => {
+                this.playlistImg = R.compose(
+                  R.prop("url"),
+                  R.head
+                )(data);
+                this.loading = false;
               });
+            }
           });
+        });
       });
+    });
   },
   methods: {
     ...mapMutations(["cleanSelectedArtists"]),
     goBack() {
       this.cleanSelectedArtists();
       this.$router.go(-1);
+    },
+    fetchData(
+      url,
+      method = "GET",
+      headers = {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+        Authorization: `Bearer ${this.accessToken}`
+      },
+      body = null,
+      response = false
+    ) {
+      return new Promise((resolve, reject) => {
+        fetch(url, {
+          method,
+          headers,
+          body
+        })
+          .then(res => {
+            response && resolve(res);
+            return res.json();
+          })
+          .then(data => {
+            const error = R.prop("error")(data);
+            if (!error) {
+              resolve(data);
+            } else {
+              this.loading = false;
+              this.sessionExpired = true;
+            }
+          })
+          .catch(error => {
+            this.loading = false;
+            this.sessionExpired = true;
+            reject(error);
+          });
+      });
     }
   }
 };
