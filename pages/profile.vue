@@ -45,11 +45,11 @@ export default {
   },
   data() {
     return {
-      loading: false,
+      loading: true,
       sessionExpired: false,
-      next: "",
+      next: null,
       endOfPageObserver: null,
-      hash: "",
+      hash: null,
       intersecting: false
     };
   },
@@ -61,7 +61,11 @@ export default {
       }
     }
   },
+  created() {
+    this.artists.length && !this.next && this.cleanArtists();
+  },
   mounted() {
+    this.fetchArtists();
     if (process.client) {
       const endOfPageEl = document.querySelector("#end-of-page");
 
@@ -80,8 +84,7 @@ export default {
     fetchArtists() {
       this.loading = true;
       const url =
-        this.next ||
-        "https://api.spotify.com/v1/me/following?type=artist&limit=20";
+        this.next || "https://api.spotify.com/v1/me/following?type=artist";
       const hash = this.hash || this.$route.hash.split("&");
       if (!!R.head(hash)) {
         const accessToken = R.compose(
@@ -102,30 +105,39 @@ export default {
             const error = R.prop("error")(data);
             if (!error) {
               this.next = R.path(["artists", "next"])(data);
-              !this.next && this.endOfPageObserver.disconnect();
               const items = R.path(["artists", "items"])(data);
-              this.artists.length && !this.next && this.cleanArtists();
+
+              if (!this.next) {
+                this.endOfPageObserver.disconnect();
+                this.endOfPageObserver = null;
+              }
+
               this.addArtists(items);
               this.loading = false;
-              // console.log({
-              //   intersecting: this.intersecting,
-              //   loading: this.loading
-              // });
 
-              // this.$nextTick(() => {
-              //   if (this.intersecting && !this.loading) {
-              //     console.log("next tick");
-              //     this.fetchArtists();
-              //   }
-              // });
+              this.$nextTick(() => {
+                setTimeout(() => {
+                  if (
+                    this.endOfPageObserver &&
+                    this.intersecting &&
+                    !this.loading
+                  ) {
+                    this.fetchArtists();
+                  }
+                }, 500);
+              });
             } else {
-              this.loading = false;
               this.sessionExpired = true;
+              this.loading = false;
             }
+          })
+          .catch(() => {
+            this.sessionExpired = true;
+            this.loading = false;
           });
       } else {
-        this.loading = false;
         this.sessionExpired = true;
+        this.loading = false;
       }
     }
   }
