@@ -45,7 +45,7 @@ export default {
   },
   data() {
     return {
-      loading: true,
+      loading: false,
       sessionExpired: false,
       next: null,
       endOfPageObserver: null,
@@ -60,9 +60,6 @@ export default {
         this.fetchArtists();
       }
     }
-  },
-  created() {
-    this.artists.length && !this.next && this.cleanArtists();
   },
   mounted() {
     this.fetchArtists();
