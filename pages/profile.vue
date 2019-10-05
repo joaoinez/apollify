@@ -68,7 +68,6 @@ export default {
         return this.artists.filter(
           ({ genres }) => !!R.intersection(genres, this.selectedGenres).length
         );
-        console.log(filtered);
       }
       return this.artists;
     }
