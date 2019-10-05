@@ -1,8 +1,9 @@
 <template>
   <section class="container">
     <h2 class="subtitle" v-if="!sessionExpired">Pick your artists</h2>
+    <ArtistsFilter></ArtistsFilter>
     <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
-      <Artist v-for="artist in artists" :key="artist.id" :artist="artist"></Artist>
+      <Artist v-for="artist in filteredArtists" :key="artist.id" :artist="artist"></Artist>
     </transition-group>
     <p v-if="!sessionExpired && !loading && !artists.length">
       You have no artists. Go follow some on
@@ -20,7 +21,7 @@
       <nuxt-link
         to="/playlist"
         class="btn-green"
-        v-if="!loading && !sessionExpired"
+        v-if="!sessionExpired"
         :event="selectedArtists.length ? 'click' : ''"
         :disabled="!selectedArtists.length"
       >Create Playlist</nuxt-link>
@@ -30,18 +31,20 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from "vuex";
+import { mapState, mapMutations, mapGetters } from "vuex";
 import * as R from "ramda";
 import Artist from "~/components/Artist";
 import SessionExpired from "~/components/SessionExpired";
 import Loader from "~/components/Loader";
+import ArtistsFilter from "~/components/ArtistsFilter";
 
 export default {
   scrollToTop: true,
   components: {
     Artist,
     SessionExpired,
-    Loader
+    Loader,
+    ArtistsFilter
   },
   data() {
     return {
@@ -53,16 +56,29 @@ export default {
       intersecting: false
     };
   },
-  computed: mapState(["accessToken", "artists", "selectedArtists"]),
+  computed: {
+    ...mapState([
+      "accessToken",
+      "artists",
+      "selectedArtists",
+      "selectedGenres"
+    ]),
+    filteredArtists: function() {
+      if (this.selectedGenres.length) {
+        return this.artists.filter(
+          ({ genres }) => !!R.intersection(genres, this.selectedGenres).length
+        );
+        console.log(filtered);
+      }
+      return this.artists;
+    }
+  },
   watch: {
     intersecting: function(intersecting) {
       if (intersecting && !this.sessionExpired && !this.loading) {
         this.fetchArtists();
       }
     }
-  },
-  created() {
-    this.artists.length && !this.next && this.cleanArtists();
   },
   mounted() {
     this.fetchArtists();
@@ -80,7 +96,7 @@ export default {
     this.endOfPageObserver && this.endOfPageObserver.disconnect();
   },
   methods: {
-    ...mapMutations(["setAccessToken", "addArtists", "cleanArtists"]),
+    ...mapMutations(["setAccessToken", "addArtists"]),
     fetchArtists() {
       this.loading = true;
       const url =

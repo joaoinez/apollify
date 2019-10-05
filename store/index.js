@@ -7,7 +7,8 @@ export const state = () => ({
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
   artists: [],
-  selectedArtists: []
+  selectedArtists: [],
+  selectedGenres: []
 });
 
 export const mutations = {
@@ -30,5 +31,25 @@ export const mutations = {
   },
   cleanSelectedArtists(state) {
     state.selectedArtists = [];
+  },
+  addGenre(state, genre) {
+    state.selectedGenres = R.uniq([...state.selectedGenres, genre]);
+  },
+  removeGenre(state, genre) {
+    state.selectedGenres = state.selectedGenres.filter(
+      _genre => _genre !== genre
+    );
+  },
+  cleanSelectedGenres(state) {
+    state.selectedGenres = [];
   }
+};
+
+export const getters = {
+  genres: state =>
+    R.compose(
+      R.uniq,
+      R.flatten,
+      R.map(R.prop("genres"))
+    )(state.artists)
 };
