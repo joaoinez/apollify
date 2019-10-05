@@ -117,8 +117,9 @@ export default {
     });
   },
   methods: {
-    ...mapMutations(["cleanSelectedArtists"]),
+    ...mapMutations(["cleanArtists", "cleanSelectedArtists"]),
     goBack() {
+      this.cleanArtists();
       this.cleanSelectedArtists();
       this.$router.go(-1);
     },
