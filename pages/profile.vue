@@ -1,32 +1,36 @@
 <template>
-  <section class="container">
-    <h2 class="subtitle" v-if="!sessionExpired">Pick your artists</h2>
+  <section>
+    <header class="sub-container top">
+      <h2 class="subtitle" v-if="!sessionExpired">Pick your artists</h2>
+    </header>
     <ArtistsFilter></ArtistsFilter>
-    <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
-      <Artist v-for="artist in filteredArtists" :key="artist.id" :artist="artist"></Artist>
-    </transition-group>
-    <p v-if="!sessionExpired && !loading && !artists.length">
-      You have no artists. Go follow some on
-      <a
-        href="https://open.spotify.com"
-        target="_blank"
-        rel="noopener noreferrer nofollow"
-        class="link"
-      >Spotify</a> and come back later.
-    </p>
-    <Loader v-if="loading && !sessionExpired" />
-    <div v-if="!sessionExpired" id="end-of-page"></div>
-    <div class="playlist-wrapper">
-      <small v-if="selectedArtists.length">{{ selectedArtists.length }} selected</small>
-      <nuxt-link
-        to="/playlist"
-        class="btn-green"
-        v-if="!sessionExpired"
-        :event="selectedArtists.length ? 'click' : ''"
-        :disabled="!selectedArtists.length"
-      >Create Playlist</nuxt-link>
-    </div>
-    <SessionExpired v-if="sessionExpired" />
+    <article class="sub-container bottom">
+      <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
+        <Artist v-for="artist in filteredArtists" :key="artist.id" :artist="artist"></Artist>
+      </transition-group>
+      <p v-if="!sessionExpired && !loading && !artists.length">
+        You have no artists. Go follow some on
+        <a
+          href="https://open.spotify.com"
+          target="_blank"
+          rel="noopener noreferrer nofollow"
+          class="link"
+        >Spotify</a> and come back later.
+      </p>
+      <Loader v-if="loading && !sessionExpired" />
+      <div v-if="!sessionExpired" id="end-of-page"></div>
+      <div class="playlist-wrapper">
+        <small v-if="selectedArtists.length">{{ selectedArtists.length }} selected</small>
+        <nuxt-link
+          to="/playlist"
+          class="btn-green"
+          v-if="!sessionExpired"
+          :event="selectedArtists.length ? 'click' : ''"
+          :disabled="!selectedArtists.length"
+        >Create Playlist</nuxt-link>
+      </div>
+      <SessionExpired v-if="sessionExpired" />
+    </article>
   </section>
 </template>
 
@@ -160,8 +164,35 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.container {
+section {
+  height: 100%;
+  min-height: 100vh;
   position: relative;
+}
+
+.sub-container {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  color: white;
+  margin: 0 auto;
+
+  h2 {
+    text-align: center;
+  }
+
+  &.top {
+    margin-top: 100px;
+  }
+
+  &.bottom {
+    max-width: 1000px;
+    padding: 100px 40px;
+    padding-top: 0;
+  }
 }
 
 ul {
