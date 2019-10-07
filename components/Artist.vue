@@ -19,7 +19,7 @@
           <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
         <div class="round-btn" v-if="isSelected()">
-          <font-awesome-icon :icon="['fas', 'minus']" class="icon" />
+          <font-awesome-icon :icon="['fas', 'minus']" />
         </div>
       </button>
     </div>
@@ -164,11 +164,6 @@ li {
 
     &:focus {
       outline: none;
-    }
-
-    .icon {
-      width: 20px;
-      height: auto;
     }
   }
 

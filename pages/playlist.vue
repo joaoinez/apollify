@@ -1,5 +1,5 @@
 <template>
-  <section class="container">
+  <section class="container no-padding">
     <h2 class="subtitle" v-if="loading">Creating your playlist...</h2>
     <Loader v-if="loading && !sessionExpired" />
     <h2 class="subtitle" v-else-if="!sessionExpired">Here's your playlist!</h2>
@@ -13,11 +13,7 @@
         <div class="missing-img" v-else></div>
       </div>
     </transition>
-    <a
-      @click="goBack"
-      class="btn-green"
-      v-if="!loading && !sessionExpired"
-    >Want to make another one?</a>
+    <a @click="goBack" class="btn-green" v-if="!loading && !sessionExpired">Make another one</a>
     <SessionExpired v-if="sessionExpired" />
   </section>
 </template>

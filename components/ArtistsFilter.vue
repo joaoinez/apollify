@@ -1,11 +1,31 @@
 <template>
-  <div class="sticky">
-    <button
-      v-for="genre in genres"
-      :key="genre"
-      :class="{'btn-pill': true, 'active': selectedGenres.includes(genre)}"
-      @click="toggleGenre(genre)"
-    >{{ genre }}</button>
+  <div :class="{'sticky': true, 'background': open}">
+    <button :class="{ 'btn-pill': true, 'large': true, 'active': open }" @click="toggleMenu()">
+      Filter
+      <font-awesome-icon :icon="['fas', 'chevron-down']" v-if="!open" />
+      <font-awesome-icon :icon="['fas', 'chevron-up']" v-else />
+    </button>
+    <div class="genre-container margin" v-if="selectedGenres.length">
+      <button
+        v-for="genre in selectedGenres"
+        :key="genre"
+        :class="{'btn-pill': true, 'active': selectedGenres.includes(genre)}"
+        @click="toggleGenre(genre)"
+      >
+        {{ genre }}
+        <font-awesome-icon :icon="['fas', 'times']" />
+      </button>
+    </div>
+    <div v-if="open">
+      <div class="genre-container">
+        <button
+          v-for="genre in genres"
+          :key="genre"
+          :class="{'btn-pill': true, 'active': selectedGenres.includes(genre)}"
+          @click="toggleGenre(genre)"
+        >{{ genre }}</button>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -14,12 +34,20 @@ import { mapState, mapMutations, mapGetters } from "vuex";
 import * as R from "ramda";
 
 export default {
+  data() {
+    return {
+      open: false
+    };
+  },
   computed: {
     ...mapState(["artists", "selectedGenres"]),
     ...mapGetters(["genres"])
   },
   methods: {
     ...mapMutations(["addGenre", "removeGenre"]),
+    toggleMenu() {
+      this.open = !this.open;
+    },
     toggleGenre(genre) {
       if (!this.selectedGenres.includes(genre)) {
         this.addGenre(genre);
@@ -34,25 +62,24 @@ export default {
 <style scoped lang="scss">
 .sticky {
   position: sticky;
-  top: 20px;
+  top: 0;
   width: 100%;
-  padding: 10px 0;
   margin-bottom: 40px;
   z-index: 2;
-  display: grid;
-  grid-gap: calc(20px);
-  grid-template-columns: 10px;
-  grid-template-rows: minmax(auto, 1fr);
-  grid-auto-flow: column;
-  grid-auto-columns: max-content;
-  overflow-x: scroll;
-  scroll-snap-type: x proximity;
-}
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: auto;
 
-.sticky:before,
-.sticky:after {
-  content: "";
-  width: 10px;
+  &.background {
+    background: rgb(36, 36, 36);
+    background: radial-gradient(
+      circle,
+      rgba(36, 36, 36, 1) 0%,
+      rgba(69, 69, 69, 1) 100%
+    );
+    box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
+  }
 }
 
 .btn-pill {
@@ -79,6 +106,32 @@ export default {
 
   &.active {
     background-color: #1ed760;
+  }
+
+  &.large {
+    font-size: 1.2em;
+    padding: 10px 40px;
+    margin: 20px 0;
+  }
+
+  svg {
+    margin-left: 5px;
+  }
+}
+
+.genre-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-height: 30vh;
+  overflow-y: auto;
+  width: 100%;
+
+  &.margin {
+    margin-bottom: 20px;
+  }
+
+  .btn-pill {
+    margin: 3px 4px;
   }
 }
 </style>
