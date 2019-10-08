@@ -17,7 +17,7 @@
           class="link"
         >Spotify</a> and come back later.
       </p>
-      <Loader v-if="loading && !sessionExpired" />
+      <Loader v-if="!sessionExpired" :loading="loading" />
       <div v-if="!sessionExpired" id="end-of-page"></div>
       <div class="playlist-wrapper">
         <small v-if="selectedArtists.length">{{ selectedArtists.length }} selected</small>
@@ -65,15 +65,28 @@ export default {
       "accessToken",
       "artists",
       "selectedArtists",
-      "selectedGenres"
+      "selectedGenres",
+      "search"
     ]),
     filteredArtists: function() {
       if (this.selectedGenres.length) {
         return this.artists.filter(
-          ({ genres }) => !!R.intersection(genres, this.selectedGenres).length
+          ({ name, genres }) =>
+            !!R.intersection(genres, this.selectedGenres).length &&
+            R.compose(
+              R.includes(this.search),
+              R.toLower,
+              R.trim
+            )(name)
         );
       }
-      return this.artists;
+      return this.artists.filter(({ name }) =>
+        R.compose(
+          R.includes(this.search),
+          R.toLower,
+          R.trim
+        )(name)
+      );
     }
   },
   watch: {
@@ -127,6 +140,7 @@ export default {
               const items = R.path(["artists", "items"])(data);
 
               if (!this.next) {
+                this.loading = false;
                 this.endOfPageObserver.disconnect();
                 this.endOfPageObserver = null;
               }
@@ -134,17 +148,18 @@ export default {
               this.addArtists(items);
               this.loading = false;
 
-              this.$nextTick(() => {
-                setTimeout(() => {
-                  if (
-                    this.endOfPageObserver &&
-                    this.intersecting &&
-                    !this.loading
-                  ) {
-                    this.fetchArtists();
-                  }
-                }, 500);
-              });
+              this.next &&
+                this.$nextTick(() => {
+                  setTimeout(() => {
+                    if (
+                      this.endOfPageObserver &&
+                      this.intersecting &&
+                      !this.loading
+                    ) {
+                      this.fetchArtists();
+                    }
+                  }, 500);
+                });
             } else {
               this.sessionExpired = true;
               this.loading = false;
