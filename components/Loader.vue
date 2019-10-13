@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div :class="{'hidden': !loading}">
     <div class="round"></div>
     <div class="round delay-1"></div>
     <div class="round delay-2"></div>
@@ -7,10 +7,18 @@
 </template>
 
 <script>
-export default {};
+export default {
+  props: {
+    loading: Boolean
+  }
+};
 </script>
 
 <style scoped lang="scss">
+.hidden {
+  opacity: 0;
+}
+
 .round {
   width: 10px;
   height: 10px;
