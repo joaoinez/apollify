@@ -3,7 +3,7 @@
     <header class="sub-container top">
       <h2 class="subtitle" v-if="!sessionExpired">Pick your artists</h2>
     </header>
-    <ArtistsFilter></ArtistsFilter>
+    <ArtistsFilter v-if="!sessionExpired && artists.length"></ArtistsFilter>
     <article class="sub-container bottom">
       <transition-group name="artists-list" tag="ul" v-if="!sessionExpired">
         <Artist v-for="artist in filteredArtists" :key="artist.id" :artist="artist"></Artist>
@@ -200,7 +200,7 @@ section {
   }
 
   &.top {
-    margin-top: 100px;
+    padding-top: 100px;
   }
 
   &.bottom {
@@ -257,7 +257,8 @@ a[disabled] {
   transition: all 0.5s;
 }
 
-.artists-list-enter, .artists-list-leave-to /* .list-leave-active below version 2.1.8 */ {
+.artists-list-enter,
+.artists-list-leave-to {
   opacity: 0;
   transform: translateY(30px);
 }

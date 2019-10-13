@@ -113,10 +113,17 @@ export default {
     });
   },
   methods: {
-    ...mapMutations(["cleanArtists", "cleanSelectedArtists"]),
+    ...mapMutations([
+      "cleanArtists",
+      "cleanSelectedArtists",
+      "cleanSelectedGenres",
+      "updateSearch"
+    ]),
     goBack() {
       this.cleanArtists();
       this.cleanSelectedArtists();
+      this.cleanSelectedGenres();
+      this.updateSearch("");
       this.$router.go(-1);
     },
     fetchData(

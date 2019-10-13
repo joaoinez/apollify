@@ -2,7 +2,7 @@
   <div :class="{'sticky': true, 'background': open}">
     <div class="filter-container">
       <label for="search" class="search-wrapper">
-        <font-awesome-icon :icon="['fas', 'search']" v-if="!open" />
+        <font-awesome-icon :icon="['fas', 'search']" />
         <input
           type="text"
           name="search"
@@ -28,8 +28,8 @@
         <font-awesome-icon :icon="['fas', 'times']" />
       </button>
     </div>
-    <div v-if="open">
-      <div class="genre-container">
+    <transition name="accordion">
+      <div class="genre-container" v-if="open">
         <button
           v-for="genre in genres"
           :key="genre"
@@ -41,7 +41,7 @@
           <font-awesome-icon :icon="['fas', 'plus']" v-else />
         </button>
       </div>
-    </div>
+    </transition>
   </div>
 </template>
 
@@ -94,7 +94,7 @@ export default {
   position: sticky;
   top: 0;
   width: 100%;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
   z-index: 2;
   height: auto;
 
@@ -115,7 +115,7 @@ export default {
   flex-wrap: wrap;
   justify-content: center;
   align-items: center;
-  padding: 10px 0;
+  padding-top: 10px;
 }
 
 .search-wrapper {
@@ -143,7 +143,6 @@ export default {
   display: inline-block;
   box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
   outline: none;
-  font-size: 1.2em;
   padding: 10px 40px;
 
   &:hover,
@@ -159,7 +158,7 @@ export default {
   border-radius: 500px;
   cursor: pointer;
   font-weight: 700;
-  font-size: 1em;
+  font-size: 0.9em;
   text-align: center;
   padding: 8px 15px;
   transition-duration: 33ms;
@@ -178,8 +177,8 @@ export default {
   }
 
   &.large {
-    font-size: 1.2em;
-    padding: 10px 40px;
+    font-size: 1em;
+    padding: 10px 30px;
     margin: 10px 0;
   }
 
@@ -197,7 +196,7 @@ export default {
   grid-auto-columns: max-content;
   overflow-x: scroll;
   scroll-snap-type: x proximity;
-  padding-bottom: 20px;
+  padding: 10px 0 20px 0;
 }
 
 .genre-scroll:before,
@@ -217,5 +216,15 @@ export default {
   .btn-pill {
     margin: 5px;
   }
+}
+
+.accordion-enter-active,
+.accordion-leave-active {
+  transition: all 0.2s ease;
+}
+.accordion-enter,
+.accordion-leave-to {
+  opacity: 0;
+  max-height: 0;
 }
 </style>
