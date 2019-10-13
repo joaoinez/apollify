@@ -8,7 +8,8 @@ export const state = () => ({
   accessToken: "",
   artists: [],
   selectedArtists: [],
-  selectedGenres: []
+  selectedGenres: [],
+  search: ""
 });
 
 export const mutations = {
@@ -42,6 +43,9 @@ export const mutations = {
   },
   cleanSelectedGenres(state) {
     state.selectedGenres = [];
+  },
+  updateSearch(state, value) {
+    state.search = value;
   }
 };
 

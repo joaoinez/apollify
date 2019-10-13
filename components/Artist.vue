@@ -6,20 +6,20 @@
         :alt="artist.name"
         v-if="highResImg || lowResImg"
         loading="lazy"
-        width="200"
-        height="200"
+        width="150"
+        height="150"
       />
       <p v-if="!highResImg">?</p>
       <button
-        :class="{'dark-filter': true, 'selected': isSelected()}"
+        :class="{'dark-filter': true, 'selected': isSelected}"
         @click="toggleArtist"
         aria-label="Toggle artist selected"
       >
-        <div class="round-btn" v-if="!isSelected()">
+        <div class="round-btn" v-if="!isSelected">
           <font-awesome-icon :icon="['fas', 'plus']" />
         </div>
-        <div class="round-btn" v-if="isSelected()">
-          <font-awesome-icon :icon="['fas', 'minus']" class="icon" />
+        <div class="round-btn" v-if="isSelected">
+          <font-awesome-icon :icon="['fas', 'minus']" />
         </div>
       </button>
     </div>
@@ -51,15 +51,18 @@ export default {
       )(this.artist)
     };
   },
-  computed: mapState(["selectedArtists"]),
+  computed: {
+    ...mapState(["selectedArtists"]),
+    isSelected: function() {
+      return this.selectedArtists.includes(this.artist.id);
+    }
+  },
   mounted() {
     if (process.client) {
       const imgEl = this.$el.querySelector(".img-wrapper");
-
       this.observer = new window.IntersectionObserver(([entry]) => {
         this.visible = entry.isIntersecting;
       });
-
       imgEl && this.observer.observe(imgEl);
     }
   },
@@ -68,11 +71,8 @@ export default {
   },
   methods: {
     ...mapMutations(["addArtist", "removeArtist"]),
-    isSelected() {
-      return this.selectedArtists.includes(this.artist.id);
-    },
     toggleArtist() {
-      if (!this.isSelected()) {
+      if (!this.isSelected) {
         this.addArtist(this.artist.id);
       } else {
         this.removeArtist(this.artist.id);
@@ -86,7 +86,7 @@ export default {
 li {
   text-align: center;
   margin: 20px;
-  max-width: 200px;
+  max-width: 150px;
 
   &:hover {
     .dark-filter {
@@ -103,8 +103,8 @@ li {
   border-radius: 50%;
   overflow: hidden;
   position: relative;
-  height: 200px;
-  width: 200px;
+  height: 150px;
+  width: 150px;
   margin-bottom: 10px;
   box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
 
@@ -113,8 +113,8 @@ li {
     transition-property: opacity;
     height: 100%;
     width: 100%;
-    max-width: 200px;
-    max-width: 200px;
+    max-width: 150px;
+    max-width: 150px;
     object-fit: cover;
   }
 
@@ -125,8 +125,8 @@ li {
     display: flex;
     justify-content: center;
     align-items: center;
-    top: calc(50% - 100px);
-    left: calc(50% - 100px);
+    top: calc(50% - 75px);
+    left: calc(50% - 75px);
     background-color: rgba(0, 0, 0, 0.3);
     transition-duration: 33ms;
     transition-property: opacity;
@@ -164,11 +164,6 @@ li {
 
     &:focus {
       outline: none;
-    }
-
-    .icon {
-      width: 20px;
-      height: auto;
     }
   }
 
