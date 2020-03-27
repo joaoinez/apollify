@@ -63,13 +63,7 @@ export default {
         return this.$store.state.search;
       },
       set(value) {
-        this.$store.commit(
-          "updateSearch",
-          R.compose(
-            R.toLower,
-            R.trim
-          )(value)
-        );
+        this.$store.commit("updateSearch", R.compose(R.toLower, R.trim)(value));
       }
     }
   },

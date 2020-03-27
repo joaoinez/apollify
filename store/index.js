@@ -2,7 +2,7 @@ require("dotenv").config();
 import * as R from "ramda";
 
 export const state = () => ({
-  clientID: process.env.CLIENT_ID,
+  clientID: process.env.clientID,
   redirectURI: process.env.redirectURI,
   scope: "user-read-private playlist-modify-private user-follow-read",
   accessToken: "",
@@ -52,6 +52,7 @@ export const mutations = {
 export const getters = {
   genres: state =>
     R.compose(
+      R.sort(R.comparator(R.lt)),
       R.uniq,
       R.flatten,
       R.map(R.prop("genres"))

@@ -43,74 +43,16 @@ export default {
   },
   computed: mapState(["accessToken", "selectedArtists"]),
   mounted() {
-    this.fetchData("https://api.spotify.com/v1/me").then(data => {
-      this.userID = R.prop("id")(data);
-      this.country = R.prop("country")(data);
-
-      Promise.all(
-        this.selectedArtists.map(id =>
-          this.fetchData(
-            `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`
-          )
-        )
-      ).then(data => {
-        this.tracks = R.compose(
-          R.reverse,
-          R.map(R.prop("uri")),
-          R.sortBy(R.prop("popularity")),
-          R.flatten,
-          R.map(R.prop("tracks"))
-        )(data);
-
-        this.fetchData(
-          `https://api.spotify.com/v1/users/${this.userID}/playlists`,
-          "POST",
-          undefined,
-          JSON.stringify({
-            name: "Apollify Playlist",
-            public: false
-          })
-        ).then(data => {
-          this.playlistID = R.prop("id")(data);
-          this.playlistURL = R.path(["external_urls", "spotify"])(data);
-
-          Promise.all(
-            R.splitEvery(100)(this.tracks).map(
-              tracks =>
-                tracks.length &&
-                this.fetchData(
-                  `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks`,
-                  "POST",
-                  undefined,
-                  JSON.stringify({
-                    uris: tracks
-                  }),
-                  true
-                )
-            )
-          ).then(res => {
-            const error = res.find(response => {
-              R.prop("status")(response) !== 201;
-            });
-
-            if (error) {
-              this.sessionExpired = true;
-              this.loading = false;
-            } else {
-              this.fetchData(
-                `https://api.spotify.com/v1/playlists/${this.playlistID}/images`
-              ).then(data => {
-                this.playlistImg = R.compose(
-                  R.prop("url"),
-                  R.head
-                )(data);
-                this.loading = false;
-              });
-            }
-          });
-        });
+    this.fetchData("https://api.spotify.com/v1/me")
+      .then(this.getTracks)
+      .then(this.createPlaylist)
+      .then(this.addTracksToPlaylist)
+      .then(this.checkPlaylist)
+      .then(this.getPlaylistImage)
+      .catch(error => {
+        this.sessionExpired = true;
+        this.loading = false;
       });
-    });
   },
   methods: {
     ...mapMutations([
@@ -149,19 +91,84 @@ export default {
           })
           .then(data => {
             const error = R.prop("error")(data);
-            if (!error) {
-              resolve(data);
+            if (error) {
+              reject(error);
             } else {
-              this.loading = false;
-              this.sessionExpired = true;
+              resolve(data);
             }
           })
           .catch(error => {
-            this.loading = false;
-            this.sessionExpired = true;
             reject(error);
           });
       });
+    },
+    getTracks(data) {
+      this.userID = R.prop("id")(data);
+      this.country = R.prop("country")(data);
+
+      return Promise.all(
+        this.selectedArtists.map(id =>
+          this.fetchData(
+            `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`
+          )
+        )
+      );
+    },
+    createPlaylist(data) {
+      this.tracks = R.compose(
+        R.reverse,
+        R.map(R.prop("uri")),
+        R.sortBy(R.prop("popularity")),
+        R.flatten,
+        R.map(R.prop("tracks"))
+      )(data);
+
+      return this.fetchData(
+        `https://api.spotify.com/v1/users/${this.userID}/playlists`,
+        "POST",
+        undefined,
+        JSON.stringify({
+          name: "Apollify Playlist",
+          public: false
+        })
+      );
+    },
+    addTracksToPlaylist(data) {
+      this.playlistID = R.prop("id")(data);
+      this.playlistURL = R.path(["external_urls", "spotify"])(data);
+
+      return Promise.all(
+        R.splitEvery(100)(this.tracks).map(
+          tracks =>
+            tracks.length &&
+            this.fetchData(
+              `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks`,
+              "POST",
+              undefined,
+              JSON.stringify({
+                uris: tracks
+              }),
+              true
+            )
+        )
+      );
+    },
+    checkPlaylist(res) {
+      const error = res.find(response => {
+        R.prop("status")(response) !== 201;
+      });
+
+      if (error) {
+        return new Promise((_, reject) => reject(error));
+      } else {
+        return this.fetchData(
+          `https://api.spotify.com/v1/playlists/${this.playlistID}/images`
+        );
+      }
+    },
+    getPlaylistImage(data) {
+      this.playlistImg = R.compose(R.prop("url"), R.head)(data);
+      this.loading = false;
     }
   }
 };
