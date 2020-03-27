@@ -1,10 +1,12 @@
-[{
-  "relation": ["delegate_permission/common.handle_all_urls"],
-  "target": {
-    "namespace": "android_app",
-    "package_name": "com.apollify.twa",
-    "sha256_cert_fingerprints": [
-      "E1:A9:53:00:BB:FC:12:03:84:8E:6D:96:5F:1D:3A:88:31:A6:0A:4C:B6:9A:FB:E4:C8:F1:B6:57:F3:DA:14:4D"
-    ]
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.apollify.twa",
+      "sha256_cert_fingerprints": [
+        "E1:A9:53:00:BB:FC:12:03:84:8E:6D:96:5F:1D:3A:88:31:A6:0A:4C:B6:9A:FB:E4:C8:F1:B6:57:F3:DA:14:4D"
+      ]
+    }
   }
-}]
+]
