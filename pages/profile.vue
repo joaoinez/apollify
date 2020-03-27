@@ -73,19 +73,11 @@ export default {
         return this.artists.filter(
           ({ name, genres }) =>
             !!R.intersection(genres, this.selectedGenres).length &&
-            R.compose(
-              R.includes(this.search),
-              R.toLower,
-              R.trim
-            )(name)
+            R.compose(R.includes(this.search), R.toLower, R.trim)(name)
         );
       }
       return this.artists.filter(({ name }) =>
-        R.compose(
-          R.includes(this.search),
-          R.toLower,
-          R.trim
-        )(name)
+        R.compose(R.includes(this.search), R.toLower, R.trim)(name)
       );
     }
   },
@@ -161,11 +153,10 @@ export default {
                   }, 500);
                 });
             } else {
-              this.sessionExpired = true;
-              this.loading = false;
+              return new Promise((_, reject) => reject(error));
             }
           })
-          .catch(() => {
+          .catch(error => {
             this.sessionExpired = true;
             this.loading = false;
           });

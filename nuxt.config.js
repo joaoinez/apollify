@@ -2,7 +2,8 @@ require("dotenv").config();
 export default {
   env: {
     nodeEnv: process.env.NODE_ENV || "development",
-    redirectURI: process.env.REDIRECT_URI || "http://localhost:3000/profile"
+    redirectURI: process.env.REDIRECT_URI || "http://localhost:3000/profile",
+    clientID: process.env.CLIENT_ID || "client_id"
   },
   mode: "universal",
   /*
