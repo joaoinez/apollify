@@ -3,7 +3,7 @@ export default {
   env: {
     nodeEnv: process.env.NODE_ENV || "development",
     redirectURI: process.env.REDIRECT_URI || "http://localhost:3000/profile",
-    clientID: process.env.CLIENT_ID || "client_id"
+    clientID: process.env.CLIENT_ID || "client_id",
   },
   mode: "universal",
   /*
@@ -17,80 +17,80 @@ export default {
       {
         hid: "description",
         name: "description",
-        content: process.env.npm_package_description || ""
+        content: process.env.npm_package_description || "",
       },
       {
         hid: "keywords",
         name: "keywords",
-        content: "spotify, artists, playlist, apollify"
+        content: "spotify, artists, playlist, apollify",
       },
       {
         hid: "og:type",
         property: "og:type",
-        content: "website"
+        content: "website",
       },
       {
         hid: "og:title",
         property: "og:title",
-        content: "Apollify"
+        content: "Apollify",
       },
       {
         hid: "og:site_name",
         property: "og:site_name",
-        content: "Apollify"
+        content: "Apollify",
       },
       {
         hid: "og:description",
         property: "og:description",
-        content: process.env.npm_package_description || ""
+        content: process.env.npm_package_description || "",
       },
       {
         hid: "og:url",
         property: "og:url",
-        content: "https://www.apollify.com/"
+        content: "https://www.apollify.com/",
       },
       {
         hid: "og:image",
         property: "og:image",
-        content: "https://www.apollify.com/image.png"
+        content: "https://www.apollify.com/image.png",
       },
       {
         hid: "og:image:alt",
         property: "og:image:alt",
-        content: "Apollify"
+        content: "Apollify",
       },
       {
         hid: "twitter:card",
         name: "twitter:card",
-        content: "summary_large_image"
+        content: "summary_large_image",
       },
       {
         hid: "twitter:url",
         name: "twitter:url",
-        content: "https://www.apollify.com"
+        content: "https://www.apollify.com",
       },
       {
         hid: "twitter:title",
         name: "twitter:title",
-        content: "Apollify"
+        content: "Apollify",
       },
       {
         hid: "twitter:description",
         name: "twitter:description",
-        content: process.env.npm_package_description || ""
+        content: process.env.npm_package_description || "",
       },
       {
         hid: "twitter:image",
         name: "twitter:image",
-        content: "https://www.apollify.com/image.png"
+        content: "https://www.apollify.com/image.png",
       },
       {
         hid: "twitter:image:alt",
         name: "twitter:image:alt",
-        content: "Apollify"
-      }
+        content: "Apollify",
+      },
     ],
-    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }]
+    link: [{ rel: "icon", type: "image/x-icon", href: "/favicon.ico" }],
   },
   /*
    ** Customize the progress-bar color
@@ -101,13 +101,13 @@ export default {
     short_name: "Apollify",
     description: process.env.npm_package_description || "",
     theme_color: "#4a148c",
-    lang: "en"
+    lang: "en",
   },
   /*
    ** Global CSS
    */
   css: [],
-  serverMiddleware: ["redirect-ssl", "~/api/redirect-heroku"],
+  serverMiddleware: ["redirect-ssl"],
   /*
    ** Plugins to load before mounting the App
    */
@@ -127,17 +127,17 @@ export default {
         imports: [
           {
             set: "@fortawesome/free-solid-svg-icons",
-            icons: ["fas"]
-          }
-        ]
-      }
+            icons: ["fas"],
+          },
+        ],
+      },
     ],
     [
       "@nuxtjs/google-analytics",
       {
-        id: process.env.ANALYTICS_ID
-      }
-    ]
+        id: process.env.ANALYTICS_ID,
+      },
+    ],
   ],
   /*
    ** Build configuration
@@ -148,8 +148,8 @@ export default {
      */
     extend(config, ctx) {
       config.node = {
-        fs: "empty"
+        fs: "empty",
       };
-    }
-  }
+    },
+  },
 };
