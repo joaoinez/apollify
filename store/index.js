@@ -9,7 +9,9 @@ export const state = () => ({
   artists: [],
   selectedArtists: [],
   selectedGenres: [],
-  search: ""
+  search: "",
+  playlistName: "Apollify Playlist",
+  songsPerArtist: "10",
 });
 
 export const mutations = {
@@ -27,7 +29,7 @@ export const mutations = {
   },
   removeArtist(state, artist) {
     state.selectedArtists = state.selectedArtists.filter(
-      _artist => _artist !== artist
+      (_artist) => _artist !== artist
     );
   },
   cleanSelectedArtists(state) {
@@ -38,7 +40,7 @@ export const mutations = {
   },
   removeGenre(state, genre) {
     state.selectedGenres = state.selectedGenres.filter(
-      _genre => _genre !== genre
+      (_genre) => _genre !== genre
     );
   },
   cleanSelectedGenres(state) {
@@ -46,15 +48,21 @@ export const mutations = {
   },
   updateSearch(state, value) {
     state.search = value;
-  }
+  },
+  updatePlaylistName(state, value) {
+    state.playlistName = value;
+  },
+  changeSongsPerArtist(state, value) {
+    state.songsPerArtist = value;
+  },
 };
 
 export const getters = {
-  genres: state =>
+  genres: (state) =>
     R.compose(
       R.sort(R.comparator(R.lt)),
       R.uniq,
       R.flatten,
       R.map(R.prop("genres"))
-    )(state.artists)
+    )(state.artists),
 };

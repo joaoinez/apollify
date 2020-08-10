@@ -27,7 +27,7 @@ import Loader from "~/components/Loader";
 export default {
   components: {
     SessionExpired,
-    Loader
+    Loader,
   },
   data() {
     return {
@@ -38,10 +38,15 @@ export default {
       tracks: [],
       playlistID: "",
       playlistURL: "",
-      playlistImg: ""
+      playlistImg: "",
     };
   },
-  computed: mapState(["accessToken", "selectedArtists"]),
+  computed: mapState([
+    "accessToken",
+    "selectedArtists",
+    "songsPerArtist",
+    "playlistName",
+  ]),
   mounted() {
     this.fetchData("https://api.spotify.com/v1/me")
       .then(this.getTracks)
@@ -49,7 +54,7 @@ export default {
       .then(this.addTracksToPlaylist)
       .then(this.checkPlaylist)
       .then(this.getPlaylistImage)
-      .catch(error => {
+      .catch((error) => {
         this.sessionExpired = true;
         this.loading = false;
       });
@@ -59,13 +64,17 @@ export default {
       "cleanArtists",
       "cleanSelectedArtists",
       "cleanSelectedGenres",
-      "updateSearch"
+      "updateSearch",
+      "changeSongsPerArtist",
+      "updatePlaylistName",
     ]),
     goBack() {
       this.cleanArtists();
       this.cleanSelectedArtists();
       this.cleanSelectedGenres();
       this.updateSearch("");
+      this.changeSongsPerArtist("10");
+      this.updatePlaylistName("Apollify Playlist");
       this.$router.go(-1);
     },
     fetchData(
@@ -74,7 +83,7 @@ export default {
       headers = {
         "Content-Type": "application/json",
         Accept: "application/json",
-        Authorization: `Bearer ${this.accessToken}`
+        Authorization: `Bearer ${this.accessToken}`,
       },
       body = null,
       response = false
@@ -83,13 +92,13 @@ export default {
         fetch(url, {
           method,
           headers,
-          body
+          body,
         })
-          .then(res => {
+          .then((res) => {
             response && resolve(res);
             return res.json();
           })
-          .then(data => {
+          .then((data) => {
             const error = R.prop("error")(data);
             if (error) {
               reject(error);
@@ -97,7 +106,7 @@ export default {
               resolve(data);
             }
           })
-          .catch(error => {
+          .catch((error) => {
             reject(error);
           });
       });
@@ -106,30 +115,64 @@ export default {
       this.userID = R.prop("id")(data);
       this.country = R.prop("country")(data);
 
-      return Promise.all(
-        this.selectedArtists.map(id =>
-          this.fetchData(
-            `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`
+      if (this.songsPerArtist !== "all") {
+        return Promise.all(
+          this.selectedArtists.map((id) =>
+            this.fetchData(
+              `https://api.spotify.com/v1/artists/${id}/top-tracks?country=${this.country}`
+            )
           )
-        )
-      );
+        );
+      } else {
+        return Promise.all(
+          this.selectedArtists.map((id) =>
+            this.fetchAlbums(
+              `https://api.spotify.com/v1/artists/${id}/albums?include_groups=album,single&limit=50`
+            )
+          )
+        ).then((data) => {
+          const albumsIds = R.flatten(data);
+
+          return Promise.all(
+            R.splitEvery(20)(albumsIds).map((ids) => {
+              return this.fetchData(
+                `https://api.spotify.com/v1/albums?ids=${ids.join(",")}`
+              ).then((data) => {
+                const albums = R.prop("albums")(data);
+                return Promise.all(
+                  albums.map((album) => {
+                    const tracks = R.prop("tracks")(album);
+                    const items = R.prop("items")(tracks);
+                    const next = R.prop("next")(tracks);
+
+                    return next ? this.fetchTracks(next, items) : items;
+                  })
+                );
+              });
+            })
+          );
+        });
+      }
     },
     createPlaylist(data) {
-      this.tracks = R.compose(
-        R.reverse,
-        R.map(R.prop("uri")),
-        R.sortBy(R.prop("popularity")),
-        R.flatten,
-        R.map(R.prop("tracks"))
-      )(data);
+      this.tracks =
+        this.songsPerArtist !== "all"
+          ? R.compose(
+              R.reverse,
+              R.map(R.prop("uri")),
+              R.sortBy(R.prop("popularity")),
+              R.flatten,
+              R.map(R.compose(R.take(+this.songsPerArtist), R.prop("tracks")))
+            )(data)
+          : R.compose(R.map(R.prop("uri")), R.flatten)(data);
 
       return this.fetchData(
         `https://api.spotify.com/v1/users/${this.userID}/playlists`,
         "POST",
         undefined,
         JSON.stringify({
-          name: "Apollify Playlist",
-          public: false
+          name: this.playlistName,
+          public: false,
         })
       );
     },
@@ -139,14 +182,14 @@ export default {
 
       return Promise.all(
         R.splitEvery(100)(this.tracks).map(
-          tracks =>
+          (tracks) =>
             tracks.length &&
             this.fetchData(
               `https://api.spotify.com/v1/playlists/${this.playlistID}/tracks`,
               "POST",
               undefined,
               JSON.stringify({
-                uris: tracks
+                uris: tracks,
               }),
               true
             )
@@ -154,7 +197,7 @@ export default {
       );
     },
     checkPlaylist(res) {
-      const error = res.find(response => {
+      const error = res.find((response) => {
         R.prop("status")(response) !== 201;
       });
 
@@ -169,8 +212,31 @@ export default {
     getPlaylistImage(data) {
       this.playlistImg = R.compose(R.prop("url"), R.head)(data);
       this.loading = false;
-    }
-  }
+    },
+    fetchAlbums(url, albums = []) {
+      return this.fetchData(url).then((data) => {
+        const fetchedAlbums = R.compose(
+          R.map(R.prop("id")),
+          R.prop("items")
+        )(data);
+        const next = R.prop("next")(data);
+
+        albums.push(...fetchedAlbums);
+
+        return next ? this.fetchAlbums(next, albums) : albums;
+      });
+    },
+    fetchTracks(url, items) {
+      return this.fetchData(url).then((data) => {
+        const fetchedItems = R.prop("items")(data);
+        const next = R.prop("next")(data);
+
+        items.push(...fetchedItems);
+
+        return next ? this.fetchTracks(next, items) : items;
+      });
+    },
+  },
 };
 </script>
 

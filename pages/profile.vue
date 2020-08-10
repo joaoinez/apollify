@@ -19,28 +19,20 @@
       </p>
       <Loader v-if="!sessionExpired" :loading="loading" />
       <div v-if="!sessionExpired" id="end-of-page"></div>
-      <div class="playlist-wrapper">
-        <small v-if="selectedArtists.length">{{ selectedArtists.length }} selected</small>
-        <nuxt-link
-          to="/playlist"
-          class="btn-green"
-          v-if="!sessionExpired"
-          :event="selectedArtists.length ? 'click' : ''"
-          :disabled="!selectedArtists.length"
-        >Create Playlist</nuxt-link>
-      </div>
+      <CreatePlaylist v-if="!sessionExpired" />
       <SessionExpired v-if="sessionExpired" />
     </article>
   </section>
 </template>
 
 <script>
-import { mapState, mapMutations, mapGetters } from "vuex";
+import { mapState, mapMutations } from "vuex";
 import * as R from "ramda";
 import Artist from "~/components/Artist";
 import SessionExpired from "~/components/SessionExpired";
 import Loader from "~/components/Loader";
 import ArtistsFilter from "~/components/ArtistsFilter";
+import CreatePlaylist from "~/components/CreatePlaylist";
 
 export default {
   scrollToTop: true,
@@ -48,7 +40,8 @@ export default {
     Artist,
     SessionExpired,
     Loader,
-    ArtistsFilter
+    ArtistsFilter,
+    CreatePlaylist,
   },
   data() {
     return {
@@ -57,7 +50,7 @@ export default {
       next: null,
       endOfPageObserver: null,
       hash: null,
-      intersecting: false
+      intersecting: false,
     };
   },
   computed: {
@@ -66,9 +59,9 @@ export default {
       "artists",
       "selectedArtists",
       "selectedGenres",
-      "search"
+      "search",
     ]),
-    filteredArtists: function() {
+    filteredArtists: function () {
       if (this.selectedGenres.length) {
         return this.artists.filter(
           ({ name, genres }) =>
@@ -79,14 +72,14 @@ export default {
       return this.artists.filter(({ name }) =>
         R.compose(R.includes(this.search), R.toLower, R.trim)(name)
       );
-    }
+    },
   },
   watch: {
-    intersecting: function(intersecting) {
+    intersecting: function (intersecting) {
       if (intersecting && !this.sessionExpired && !this.loading) {
         this.fetchArtists();
       }
-    }
+    },
   },
   mounted() {
     this.fetchArtists();
@@ -121,11 +114,11 @@ export default {
           headers: {
             "Content-Type": "application/json",
             Accept: "application/json",
-            Authorization: `Bearer ${this.accessToken}`
-          }
+            Authorization: `Bearer ${this.accessToken}`,
+          },
         })
-          .then(res => res.json())
-          .then(data => {
+          .then((res) => res.json())
+          .then((data) => {
             const error = R.prop("error")(data);
             if (!error) {
               this.next = R.path(["artists", "next"])(data);
@@ -156,7 +149,7 @@ export default {
               return new Promise((_, reject) => reject(error));
             }
           })
-          .catch(error => {
+          .catch((error) => {
             this.sessionExpired = true;
             this.loading = false;
           });
@@ -164,8 +157,8 @@ export default {
         this.sessionExpired = true;
         this.loading = false;
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -215,28 +208,6 @@ ul {
   padding: 0;
   width: 0;
   height: 0;
-}
-
-.playlist-wrapper {
-  position: fixed;
-  width: 100%;
-  bottom: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-bottom: 40px;
-
-  small {
-    margin-bottom: 10px;
-    text-transform: uppercase;
-    font-weight: 700;
-  }
-}
-
-a:disabled,
-a[disabled] {
-  background-color: grey;
-  pointer-events: none;
 }
 
 .artists-list-move {

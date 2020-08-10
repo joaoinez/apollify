@@ -52,7 +52,7 @@ import * as R from "ramda";
 export default {
   data() {
     return {
-      open: false
+      open: false,
     };
   },
   computed: {
@@ -64,8 +64,8 @@ export default {
       },
       set(value) {
         this.$store.commit("updateSearch", R.compose(R.toLower, R.trim)(value));
-      }
-    }
+      },
+    },
   },
   methods: {
     ...mapMutations(["addGenre", "removeGenre"]),
@@ -78,8 +78,8 @@ export default {
       } else {
         this.removeGenre(genre);
       }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -135,7 +135,7 @@ export default {
   transition-duration: 33ms;
   transition-property: background-color;
   display: inline-block;
-  box-shadow: 1px 1px 16px -2px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 1px 16px -2px rgba(0, 0, 0, 0.3);
   outline: none;
   padding: 10px 40px;
 
